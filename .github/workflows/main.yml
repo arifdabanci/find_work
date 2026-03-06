@@ -23,6 +23,6 @@ jobs:
 
       - name: Run bot
         env:
-          GMAIL_ADRESIM: ${{ secrets.EMAIL_USER }}
-          GMAIL_SIFREM: ${{ secrets.EMAIL_PASS }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         run: python bot.py
