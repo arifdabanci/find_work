@@ -11,7 +11,7 @@ import os
 ARANACAK_KELIME = "Data Labeling" # Burayı "Image Processing" vb. yapabilirsin
 EMAIL_USER = os.environ.get('EMAIL_USER')
 EMAIL_PASS = os.environ.get('EMAIL_PASS') # Google'dan alacağın 'Uygulama Şifresi'
-ALICI_POSTA = GMAIL_ADRESIM
+ALICI_POSTA = EMAIL_USER
 
 def ilan_tara():
     options = webdriver.ChromeOptions()
@@ -37,11 +37,11 @@ def mail_at(ilan_listesi):
     msg = EmailMessage()
     msg.set_content("\n".join(ilan_listesi))
     msg['Subject'] = f"Kalk İş Var! - Yeni {ARANACAK_KELIME} İlanları"
-    msg['From'] = GMAIL_ADRESIM
+    msg['From'] = EMAIL_USER
     msg['To'] = ALICI_POSTA
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(GMAIL_ADRESIM, GMAIL_SIFREM)
+        smtp.login(EMAIL_USER, EMAIL_PASS)
         smtp.send_message(msg)
     print("İlanlar e-postana gönderildi!")
 
