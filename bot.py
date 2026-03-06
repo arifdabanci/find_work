@@ -18,16 +18,21 @@ def ilan_tara():
     options.add_argument('--headless') # Tarayıcıyı gizli açar (üşengeç dostu)
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     
-    # Türkiye lokasyonlu ve Uzaktan çalışma seçenekli
-    url = f"https://www.linkedin.com/jobs/search/?keywords={ARANACAK_KELIME.replace(' ', '%20')}&location=Turkey&f_WT=2&f_TPR=r86400"
-    driver.get(url)
-    time.sleep(5) # Sayfanın yüklenmesi için bekle
+    tum_ilanlar = []
     
-    ilanlar = driver.find_elements(By.CLASS_NAME, "base-card__full-link")
-    liste = [i.get_attribute("href") for i in ilanlar[:5]] # İlk 5 ilanı al
-    
+    for kelime in ARAMA_LISTESI:
+        # LinkedIn URL'sine lokasyon (Turkey) ve Remote filtresi eklenmiş hali
+        url = f"https://www.linkedin.com/jobs/search/?keywords={kelime.replace(' ', '%20')}&location=Turkey&f_TPR=r86400"
+        driver.get(url)
+        time.sleep(3) # Her aramada kısa bekleme
+        
+        ilanlar = driver.find_elements(By.CLASS_NAME, "base-card__full-link")
+        # Her kelime için ilk 3 ilanı al ve listeye ekle
+        for i in ilanlar[:3]:
+            tum_ilanlar.append(f"{kelime}: {i.get_attribute('href')}")
+            
     driver.quit()
-    return liste
+    return tum_ilanlar
 
 def mail_at(ilan_listesi):
     if not ilan_listesi:
