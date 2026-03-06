@@ -8,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import os
 
 # --- AYARLAR ---
-ARANACAK_KELIME = "Data Labeling" # Burayı "Image Processing" vb. yapabilirsin
+ARAMA_LISTESI = ["Data Labeling", "Veri Etiketleme", "Image Annotation", "Computer Vision", "Görüntü İşleme","Nesne Tespiti", "Object Detection", "Veri girişi", "Data review"] # Burayı "Image Processing" vb. yapabilirsin
 EMAIL_USER = os.environ.get('EMAIL_USER')
 EMAIL_PASS = os.environ.get('EMAIL_PASS') # Google'dan alacağın 'Uygulama Şifresi'
 ALICI_POSTA = EMAIL_USER
@@ -18,8 +18,8 @@ def ilan_tara():
     options.add_argument('--headless') # Tarayıcıyı gizli açar (üşengeç dostu)
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     
-    # LinkedIn Misafir Arama Sayfası (Giriş gerektirmez)
-    url = f"https://www.linkedin.com/jobs/search/?keywords={ARANACAK_KELIME.replace(' ', '%20')}&f_TPR=r86400" # Son 24 saat
+    # Türkiye lokasyonlu ve Uzaktan çalışma seçenekli
+    url = f"https://www.linkedin.com/jobs/search/?keywords={ARANACAK_KELIME.replace(' ', '%20')}&location=Turkey&f_WT=2&f_TPR=r86400"
     driver.get(url)
     time.sleep(5) # Sayfanın yüklenmesi için bekle
     
