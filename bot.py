@@ -8,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import os
 
 # --- AYARLAR ---
-ARAMA_LISTESI = ["Data Labeling", "Veri Etiketleme", "Image Annotation", "Computer Vision", "Görüntü İşleme","Nesne Tespiti", "Object Detection", "Veri girişi", "Data review"] # Burayı "Image Processing" vb. yapabilirsin
+ARAMA_LISTESI = ["Data Labeling", "Veri Etiketleme", "Image Annotation", "Computer Vision", "Görüntü İşleme","Nesne Tespiti", "Object Detection", "Veri girişi", "Data review","Junior Data Scientist","AI Technician","Computer Vision Intern","Veri Giriş Uzmanı (AI)"] # Burayı "Image Processing" vb. yapabilirsin
 EMAIL_USER = os.environ.get('EMAIL_USER')
 EMAIL_PASS = os.environ.get('EMAIL_PASS') # Google'dan alacağın 'Uygulama Şifresi'
 ALICI_POSTA = EMAIL_USER
@@ -21,17 +21,15 @@ def ilan_tara():
     tum_ilanlar = []
     
     for kelime in ARAMA_LISTESI:
-        # f_E=2,3 -> Entry Level ve Associate (Lise/Önlisans dostu seviyeler)
-        # f_WT=2 -> Uzaktan (Remote) çalışma seçeneği
-        url = f"https://www.linkedin.com/jobs/search/?keywords={kelime.replace(' ', '%20')}&location=Turkey&f_E=2%2C3&f_WT=2&f_TPR=r86400"
-        
+        # LinkedIn URL'sine lokasyon (Turkey) ve Remote filtresi eklenmiş hali
+        url = f"https://www.linkedin.com/jobs/search/?keywords={kelime.replace(' ', '%20')}&location=Turkey&f_TPR=r86400"
         driver.get(url)
-        time.sleep(4)
+        time.sleep(3) # Her aramada kısa bekleme
         
-        # İlan başlıklarını ve linklerini çek
-        cards = driver.find_elements(By.CLASS_NAME, "base-card__full-link")
-        for card in cards[:3]:
-            tum_ilanlar.append(f"{kelime} Seviye: Giriş - {card.get_attribute('href')}")
+        ilanlar = driver.find_elements(By.CLASS_NAME, "base-card__full-link")
+        # Her kelime için ilk 3 ilanı al ve listeye ekle
+        for i in ilanlar[:3]:
+            tum_ilanlar.append(f"{kelime}: {i.get_attribute('href')}")
             
     driver.quit()
     return tum_ilanlar
