@@ -9,7 +9,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 # --- AYARLAR ---
 ARANACAK_KELIME = "Data Labeling" # Burayı "Image Processing" vb. yapabilirsin
 GMAIL_ADRESIM = "arifdabanci377@gmail.com"
-GMAIL_SIFREM = "senin_uygulama_sifren" # Google'dan alacağın 'Uygulama Şifresi'
+GMAIL_SIFREM = os.environ.get('EMAIL_SIFRESI') # Google'dan alacağın 'Uygulama Şifresi'
 ALICI_POSTA = "arifdabanci377@gmail.com"
 
 def ilan_tara():
