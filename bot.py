@@ -21,15 +21,17 @@ def ilan_tara():
     tum_ilanlar = []
     
     for kelime in ARAMA_LISTESI:
-        # LinkedIn URL'sine lokasyon (Turkey) ve Remote filtresi eklenmiş hali
-        url = f"https://www.linkedin.com/jobs/search/?keywords={kelime.replace(' ', '%20')}&location=Turkey&f_TPR=r86400"
-        driver.get(url)
-        time.sleep(3) # Her aramada kısa bekleme
+        # f_E=2,3 -> Entry Level ve Associate (Lise/Önlisans dostu seviyeler)
+        # f_WT=2 -> Uzaktan (Remote) çalışma seçeneği
+        url = f"https://www.linkedin.com/jobs/search/?keywords={kelime.replace(' ', '%20')}&location=Turkey&f_E=2%2C3&f_WT=2&f_TPR=r86400"
         
-        ilanlar = driver.find_elements(By.CLASS_NAME, "base-card__full-link")
-        # Her kelime için ilk 3 ilanı al ve listeye ekle
-        for i in ilanlar[:3]:
-            tum_ilanlar.append(f"{kelime}: {i.get_attribute('href')}")
+        driver.get(url)
+        time.sleep(4)
+        
+        # İlan başlıklarını ve linklerini çek
+        cards = driver.find_elements(By.CLASS_NAME, "base-card__full-link")
+        for card in cards[:3]:
+            tum_ilanlar.append(f"{kelime} Seviye: Giriş - {card.get_attribute('href')}")
             
     driver.quit()
     return tum_ilanlar
