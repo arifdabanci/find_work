@@ -41,7 +41,7 @@ def mail_at(ilan_listesi):
 
     msg = EmailMessage()
     msg.set_content("\n".join(ilan_listesi))
-    msg['Subject'] = f"Kalk İş Var! - Yeni {ARANACAK_KELIME} İlanları"
+    msg['Subject'] = f"Kalk İş Var! - Yeni {ARAMA_LISTESI} İlanları"
     msg['From'] = EMAIL_USER
     msg['To'] = ALICI_POSTA
 
