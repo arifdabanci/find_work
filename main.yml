@@ -1,0 +1,28 @@
+name: Job Hunter Bot
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # Her sabah 09:00'da otomatik çalışır (UTC)
+  workflow_dispatch: # İstediğinde manuel çalıştırmanı sağlar
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run bot
+        env:
+          GMAIL_ADRESIM: ${{ secrets.EMAIL_USER }}
+          GMAIL_SIFREM: ${{ secrets.EMAIL_PASS }}
+        run: python bot.py
