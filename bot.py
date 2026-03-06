@@ -9,8 +9,8 @@ import os
 
 # --- AYARLAR ---
 ARANACAK_KELIME = "Data Labeling" # Burayı "Image Processing" vb. yapabilirsin
-GMAIL_ADRESIM = os.environ.get('EMAIL_USER')
-GMAIL_SIFREM = os.environ.get('EMAIL_PASS') # Google'dan alacağın 'Uygulama Şifresi'
+EMAIL_USER = os.environ.get('EMAIL_USER')
+EMAIL_PASS = os.environ.get('EMAIL_PASS') # Google'dan alacağın 'Uygulama Şifresi'
 ALICI_POSTA = GMAIL_ADRESIM
 
 def ilan_tara():
