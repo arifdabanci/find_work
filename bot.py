@@ -11,7 +11,7 @@ import os
 ARANACAK_KELIME = "Data Labeling" # Burayı "Image Processing" vb. yapabilirsin
 GMAIL_ADRESIM = os.environ.get('EMAIL_USER')
 GMAIL_SIFREM = os.environ.get('EMAIL_PASS') # Google'dan alacağın 'Uygulama Şifresi'
-ALICI_POSTA = os.environ.get('EMAIL_USER')
+ALICI_POSTA = GMAIL_ADRESIM
 
 def ilan_tara():
     options = webdriver.ChromeOptions()
