@@ -8,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import os
 
 # --- AYARLAR ---
-ARAMA_LISTESI = ["Data Labeling", "Veri Etiketleme", "Image Annotation", "Computer Vision", "Görüntü İşleme","Nesne Tespiti", "Object Detection", "Veri girişi", "Data review","Junior Data Scientist","AI Technician","Computer Vision Intern","Veri Giriş Uzmanı (AI)"] # Burayı "Image Processing" vb. yapabilirsin
+ARAMA_LISTESI = ["Data Labeling", "Veri Etiketleme", "Image Annotation", "Computer Vision", "Görüntü İşleme","Nesne Tespiti", "Object Detection", "Veri girişi", "Data review","Web Scraping","Workflow Automation","Computer Vision Intern","Veri Giriş Uzmanı (AI)"] # Burayı "Image Processing" vb. yapabilirsin
 EMAIL_USER = os.environ.get('EMAIL_USER')
 EMAIL_PASS = os.environ.get('EMAIL_PASS') # Google'dan alacağın 'Uygulama Şifresi'
 ALICI_POSTA = EMAIL_USER
