@@ -1,10 +1,5 @@
 name: Job Hunter Bot
 
-on:
-  schedule:
-    - cron: '0 9 * * *' # Her sabah 09:00'da otomatik çalışır (UTC)
-  workflow_dispatch: # İstediğinde manuel çalıştırmanı sağlar
-
 jobs:
   build:
     runs-on: ubuntu-latest
