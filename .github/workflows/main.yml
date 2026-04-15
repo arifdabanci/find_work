@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3 # v2 yerine v3 daha güncel ve stabildir
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4 # v2 yerine v4 kullanıyoruz
         with:
-          python-version: '3.9'
+          python-version: '3.11' # 3.9 uyarısını gidermek ve Gemini 2.0 desteği için
 
       - name: Install dependencies
         run: |
@@ -24,6 +24,8 @@ jobs:
 
       - name: Run bot
         env:
+          # GitHub Secrets'tan gelen değişkenleri buraya tanımlıyoruz
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # Botun anahtarı görmesi için kritik satır
         run: python bot.py
