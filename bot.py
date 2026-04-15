@@ -1,44 +1,37 @@
 import time
 import smtplib
+import os
 from email.message import EmailMessage
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
-import os
-import google.generativeai as genai
+from google import genai # Yeni kütüphane: google-genai
 
 # --- AYARLAR ---
-# Gemini API Anahtarını GitHub Secrets'a eklemelisin
-genai.configure(api_key=os.environ.get('GEMINI_API_KEY'))
-model = genai.GenerativeModel('gemini-pro')
+client = genai.Client(api_key=os.environ.get('GEMINI_API_KEY'))
 
 ARAMA_LISTESI = ["Data Curation", "Model Evaluation", "Prompt Engineering", "Object Detection", "AI Data Analyst"]
 EMAIL_USER = os.environ.get('EMAIL_USER')
 EMAIL_PASS = os.environ.get('EMAIL_PASS')
 ALICI_POSTA = EMAIL_USER
 
-# Senin Master CV Bilgilerin (Botun referans alacağı kaynak)
+# Master CV Context [cite: 51, 52, 53, 55, 56]
 MASTER_CV_CONTEXT = """
-Arif Tuna Dabancı - Engineering Student at KTU (Metallurgy & Materials).
-Skills: Python (Automation, yfinance, GitHub Actions), AI Training (RLHF, Data Annotation at Crowdgen/OneForma), 
-Computer Vision (Teknofest projects, PyTorch), E-commerce (Etsy owner), Latin Dance (Interpersonal communication).
+Arif Tuna Dabancı - Engineering Student at KTU (Metallurgy & Materials)[cite: 51, 52].
+Skills: Python (Automation, yfinance, GitHub Actions) [cite: 37], AI Training (RLHF, Data Annotation at Crowdgen/OneForma)[cite: 41, 42], 
+Computer Vision (Teknofest projects, PyTorch) [cite: 23, 25], E-commerce (Etsy owner) [cite: 37], Latin Dance (Interpersonal communication)[cite: 56].
 Philosophy: First Principles, Antifragility.
 """
 
 def cv_ozellestir(ilan_metni):
-    """Gemini API kullanarak ilana özel CV bölümleri üretir."""
-    prompt = f"""
-    Aşağıdaki iş tanımı için benim bilgilerimi kullanarak ATS dostu bir 'Professional Summary' ve 'Key Skills' bölümü yaz. 
-    İş Tanımı: {ilan_metni[:2000]} 
-    Benim Bilgilerim: {MASTER_CV_CONTEXT}
-    Lütfen sadece işe en uygun teknik yetkinliklerimi vurgula.
-    """
+    prompt = f"Aşağıdaki iş tanımı için benim bilgilerimi kullanarak ATS dostu bir 'Professional Summary' ve 'Key Skills' bölümü yaz.\nİş Tanımı: {ilan_metni[:2000]}\nBenim Bilgilerim: {MASTER_CV_CONTEXT}"
     try:
-        response = model.generate_content(prompt)
+        # Yeni SDK formatı (generate_content yerine models.generate_content)
+        response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
         return response.text
-    except:
-        return "CV önerisi oluşturulamadı."
+    except Exception as e:
+        return f"CV önerisi oluşturulamadı: {str(e)}"
 
 def ilan_tara():
     options = webdriver.ChromeOptions()
@@ -54,33 +47,29 @@ def ilan_tara():
         driver.get(url)
         time.sleep(5)
         
-        # İlan linklerini bul
-        linkler = driver.find_elements(By.CLASS_NAME, "base-card__full-link")
+        # Linkleri önce metin olarak topla (StaleElement hatasını engeller)
+        link_elementleri = driver.find_elements(By.CLASS_NAME, "base-card__full-link")
+        linkler = [el.get_attribute('href') for el in link_elementleri[:2]]
         
-        for i in linkler[:2]: # Her kategori için en iyi 2 ilan
-            link = i.get_attribute('href')
-            driver.get(link) # İlanın içine gir
-            time.sleep(3)
-            
+        for link in linkler:
             try:
-                # İlan açıklamasını çek (LinkedIn'in yapısına göre güncellendi)
+                driver.get(link)
+                time.sleep(3)
+                
+                # İçeriği çek
                 description = driver.find_element(By.CLASS_NAME, "description__text").text
                 ozel_cv = cv_ozellestir(description)
+                
                 ilan_detaylari.append(f"🔍 POZİSYON: {kelime}\n🔗 LİNK: {link}\n\n✨ ÖZEL CV ÖNERİSİ:\n{ozel_cv}\n" + "-"*30)
-            except:
-                ilan_detaylari.append(f"🔍 POZİSYON: {kelime}\n🔗 LİNK: {link}\n(İçerik okunamadı)\n" + "-"*30)
-            
-            driver.back() # Arama listesine dön
-            time.sleep(2)
+            except Exception as e:
+                ilan_detaylari.append(f"🔍 POZİSYON: {kelime}\n🔗 LİNK: {link}\n(Hata: {str(e)})\n" + "-"*30)
             
     driver.quit()
     return ilan_detaylari
 
 def mail_at(icerik_listesi):
     if not icerik_listesi:
-        print("Bugün yeni ilan yok.")
         return
-
     msg = EmailMessage()
     body = "Bulunan İlanlar ve Senin İçin Hazırlanan Özel CV Taslakları:\n\n" + "\n\n".join(icerik_listesi)
     msg.set_content(body)
@@ -91,8 +80,6 @@ def mail_at(icerik_listesi):
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(EMAIL_USER, EMAIL_PASS)
         smtp.send_message(msg)
-    print("Özel CV önerileri e-postana gönderildi!")
 
-# Çalıştır
 sonuclar = ilan_tara()
 mail_at(sonuclar)
